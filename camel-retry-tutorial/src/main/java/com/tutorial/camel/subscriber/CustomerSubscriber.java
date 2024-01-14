@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * @author Osada
  * @Date 1/14/2024
  */
-@Component
+//@Component
 public class CustomerSubscriber extends RouteBuilder {
     Logger logger = LoggerFactory.getLogger(CustomerSubscriber.class);
     @Autowired
