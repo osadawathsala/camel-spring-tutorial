@@ -22,8 +22,7 @@ public class MessageRestServiceRouter extends RouteBuilder {
 
         restConfiguration().component("servlet").bindingMode(RestBindingMode.auto);
 
-        rest("/messages").description("Message REST service")
-        .consumes("application/json")
+        rest("/messages").description("Message REST service").consumes("application/json")
         .produces("application/json")
                 .get().description("Find all messages").outType(Message[].class)
                 .responseMessage().code(200).message("All Messages successfully returned").endResponseMessage()
@@ -48,22 +47,16 @@ public class MessageRestServiceRouter extends RouteBuilder {
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
                 .setBody(constant(""));
 
-                //http://localhost:8002/api/activemq/public
-               // send messages to queue
-                rest().post("activemq/public")
-                        .produces(MediaType.APPLICATION_JSON_VALUE)
-                        .consumes(MediaType.APPLICATION_JSON_VALUE)
-                        .type(Message.class)
-                        .param()
-                        .name("body")
-                        .type(body)
-                        .description("The message to update")
-                        .endParam()
-                        .to("activemq:queue:publicQueue?exchangePattern=InOnly")
-                        .responseMessage().code(204).message("Message queue successfully updated").endResponseMessage();
+   //http://localhost:8002/api/activemq/public
+   // send messages to queue
+    rest().post("activemq/public").produces(MediaType.APPLICATION_JSON_VALUE).consumes(MediaType.APPLICATION_JSON_VALUE)
+          .type(Message.class).param().name("body").type(body)
+          .description("The message queue update").endParam()
+          .to("activemq:queue:publicQueue?exchangePattern=InOnly")
+          .responseMessage().code(204).message("Message queue successfully updated").endResponseMessage();
 
                       // consume messages from queue
-                       from("activemq:queue:publicQueue").log("Reading public message incoming - ${body}").end();
+    from("activemq:queue:publicQueue").log("Reading public message incoming - ${body}").end();
 
     }
 
