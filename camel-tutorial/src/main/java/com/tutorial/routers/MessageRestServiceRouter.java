@@ -16,7 +16,7 @@ import static org.apache.camel.model.rest.RestParamType.path;
  * @Date 1/14/2024
  */
 @Component
-public class MessageRouter extends RouteBuilder {
+public class MessageRestServiceRouter extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
