@@ -1,4 +1,4 @@
-package com.tutorial.rest.routers;
+package com.tutorial.routers.rest;
 
 import com.tutorial.model.Message;
 import org.apache.camel.Exchange;
