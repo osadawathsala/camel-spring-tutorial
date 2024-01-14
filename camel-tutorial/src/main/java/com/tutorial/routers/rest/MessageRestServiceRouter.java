@@ -47,7 +47,6 @@ public class MessageRestServiceRouter extends RouteBuilder {
                 .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(204))
                 .setBody(constant(""));
 
-   //http://localhost:8002/api/activemq/public
    // send messages to queue
     rest().post("activemq/public").produces(MediaType.APPLICATION_JSON_VALUE).consumes(MediaType.APPLICATION_JSON_VALUE)
           .type(Message.class).param().name("body").type(body)
@@ -55,7 +54,7 @@ public class MessageRestServiceRouter extends RouteBuilder {
           .to("activemq:queue:publicQueue?exchangePattern=InOnly")
           .responseMessage().code(204).message("Message queue successfully updated").endResponseMessage();
 
-                      // consume messages from queue
+    // consume messages from queue
     from("activemq:queue:publicQueue").log("Reading public message incoming - ${body}").end();
 
     }
