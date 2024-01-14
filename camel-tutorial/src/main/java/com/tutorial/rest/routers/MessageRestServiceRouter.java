@@ -1,6 +1,4 @@
-package com.tutorial.routers;
-
-
+package com.tutorial.rest.routers;
 
 import com.tutorial.model.Message;
 import org.apache.camel.Exchange;
@@ -25,9 +23,8 @@ public class MessageRestServiceRouter extends RouteBuilder {
         restConfiguration().component("servlet").bindingMode(RestBindingMode.auto);
 
         rest("/messages").description("Message REST service")
-                .consumes("application/json")
-                .produces("application/json")
-
+        .consumes("application/json")
+        .produces("application/json")
                 .get().description("Find all messages").outType(Message[].class)
                 .responseMessage().code(200).message("All Messages successfully returned").endResponseMessage()
                 .to("bean:messageService?method=findMessages")
@@ -67,7 +64,6 @@ public class MessageRestServiceRouter extends RouteBuilder {
 
                       // consume messages from queue
                        from("activemq:queue:publicQueue").log("Reading public message incoming - ${body}").end();
-
 
     }
 
