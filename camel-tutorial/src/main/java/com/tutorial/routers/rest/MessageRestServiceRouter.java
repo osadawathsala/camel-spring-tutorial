@@ -1,9 +1,12 @@
 package com.tutorial.routers.rest;
 
 import com.tutorial.model.Message;
+import jakarta.jms.ConnectionFactory;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -17,13 +20,24 @@ import static org.apache.camel.model.rest.RestParamType.path;
 @Component
 public class MessageRestServiceRouter extends RouteBuilder {
 
-    @Override
-    public void configure() throws Exception {
+private String brokerUrl;
 
-        restConfiguration().component("servlet").bindingMode(RestBindingMode.auto);
+@Bean
+public ConnectionFactory connectionFactory(){
+        ActiveMQConnectionFactory activeMQConnectionFactory  = new ActiveMQConnectionFactory();
+        activeMQConnectionFactory.setBrokerURL(brokerUrl);
+        return  activeMQConnectionFactory;
+}
 
-        rest("/messages").description("Message REST service").consumes("application/json")
-        .produces("application/json")
+@Override
+public void configure() throws Exception {
+
+    restConfiguration().component("servlet")
+            .bindingMode(RestBindingMode.auto);
+
+    rest("/messages").description("Message REST service")
+        .consumes(MediaType.APPLICATION_JSON_VALUE)
+        .produces(MediaType.APPLICATION_JSON_VALUE)
                 .get().description("Find all messages").outType(Message[].class)
                 .responseMessage().code(200).message("All Messages successfully returned").endResponseMessage()
                 .to("bean:messageService?method=findMessages")
@@ -48,7 +62,9 @@ public class MessageRestServiceRouter extends RouteBuilder {
                 .setBody(constant(""));
 
    // send messages to queue
-    rest().post("activemq/public").produces(MediaType.APPLICATION_JSON_VALUE).consumes(MediaType.APPLICATION_JSON_VALUE)
+    rest().post("activemq/public")
+        .produces(MediaType.APPLICATION_JSON_VALUE)
+        .consumes(MediaType.APPLICATION_JSON_VALUE)
           .type(Message.class).param().name("body").type(body)
           .description("The message queue update").endParam()
           .to("activemq:queue:publicQueue?exchangePattern=InOnly")
